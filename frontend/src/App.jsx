@@ -7,7 +7,7 @@ import SignalPanel from "./components/SignalPanel";
 import SignalHistory from "./components/SignalHistory";
 import { Wifi, WifiOff } from "lucide-react";
 
-const WS_URL = "ws://localhost:8000/ws";
+const WS_URL = import.meta.env.VITE_WS_URL || "ws://localhost:8000/ws";
 
 export default function App() {
   const { data, connected } = useWebSocket(WS_URL);
