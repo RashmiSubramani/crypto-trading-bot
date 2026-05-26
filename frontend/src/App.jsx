@@ -8,7 +8,7 @@ import SignalHistory from "./components/SignalHistory";
 import { Wifi, WifiOff } from "lucide-react";
 
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-const WS_URL = isLocal ? "ws://localhost:8000/ws" : "ws://80.225.244.24:8000/ws";
+const WS_URL = isLocal ? "ws://localhost:8000/ws" : "wss://80.225.244.24/ws";
 
 export default function App() {
   const { data, connected } = useWebSocket(WS_URL);
