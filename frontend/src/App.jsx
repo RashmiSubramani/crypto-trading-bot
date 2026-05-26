@@ -38,6 +38,7 @@ export default function App() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <PnLCard
             summary={data?.daily_summary}
+            alltime={data?.alltime_summary}
             risk={data?.risk}
           />
           <div className="md:col-span-2">

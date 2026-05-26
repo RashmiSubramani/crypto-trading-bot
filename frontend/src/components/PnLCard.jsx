@@ -1,12 +1,19 @@
 import { TrendingUp, TrendingDown, Activity } from "lucide-react";
 
-export default function PnLCard({ summary, risk }) {
+export default function PnLCard({ summary, alltime, risk }) {
   const pnl = summary?.total_pnl ?? 0;
   const wins = summary?.wins ?? 0;
   const losses = summary?.losses ?? 0;
   const total = summary?.total ?? 0;
   const winRate = total > 0 ? ((wins / total) * 100).toFixed(0) : 0;
   const isProfit = pnl >= 0;
+
+  const alltimePnl = alltime?.total_pnl ?? 0;
+  const alltimeWins = alltime?.wins ?? 0;
+  const alltimeLosses = alltime?.losses ?? 0;
+  const alltimeTotal = alltime?.total ?? 0;
+  const alltimeWinRate = alltimeTotal > 0 ? ((alltimeWins / alltimeTotal) * 100).toFixed(0) : 0;
+  const isAlltimeProfit = alltimePnl >= 0;
 
   return (
     <div className="bg-gray-900 border border-gray-700 rounded-xl p-5">
@@ -30,6 +37,26 @@ export default function PnLCard({ summary, risk }) {
         </div>
         <div className="text-gray-400">{total} trades</div>
         <div className="text-yellow-400">{winRate}% win rate</div>
+      </div>
+
+      {/* All-time summary */}
+      <div className="mt-4 pt-4 border-t border-gray-700">
+        <div className="text-gray-500 text-xs uppercase tracking-wider mb-2">All-Time P&L</div>
+        <div className={`text-xl font-bold ${isAlltimeProfit ? "text-green-400" : "text-red-400"}`}>
+          {isAlltimeProfit ? "+" : ""}${alltimePnl.toFixed(2)}
+        </div>
+        <div className="flex gap-4 mt-2 text-xs">
+          <div className="flex items-center gap-1 text-green-400">
+            <TrendingUp size={12} />
+            <span>{alltimeWins}W</span>
+          </div>
+          <div className="flex items-center gap-1 text-red-400">
+            <TrendingDown size={12} />
+            <span>{alltimeLosses}L</span>
+          </div>
+          <div className="text-gray-400">{alltimeTotal} trades</div>
+          <div className="text-yellow-400">{alltimeWinRate}% win rate</div>
+        </div>
       </div>
 
       {risk?.trading_halted && (

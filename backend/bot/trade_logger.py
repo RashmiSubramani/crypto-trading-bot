@@ -122,6 +122,19 @@ async def get_signal_history(limit: int = 100) -> List[Dict]:
             return [dict(r) for r in rows]
 
 
+async def get_alltime_pnl_summary() -> Dict:
+    async with aiosqlite.connect(DB_PATH, timeout=30) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute(
+            """SELECT COUNT(*) as total, SUM(pnl) as total_pnl,
+               SUM(CASE WHEN pnl > 0 THEN 1 ELSE 0 END) as wins,
+               SUM(CASE WHEN pnl <= 0 THEN 1 ELSE 0 END) as losses
+               FROM trades WHERE status='closed'"""
+        ) as cursor:
+            row = await cursor.fetchone()
+            return dict(row) if row else {"total": 0, "total_pnl": 0, "wins": 0, "losses": 0}
+
+
 async def get_daily_pnl_summary() -> Dict:
     async with aiosqlite.connect(DB_PATH, timeout=30) as db:
         db.row_factory = aiosqlite.Row
