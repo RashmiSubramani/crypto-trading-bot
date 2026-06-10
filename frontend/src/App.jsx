@@ -7,8 +7,11 @@ import SignalPanel from "./components/SignalPanel";
 import SignalHistory from "./components/SignalHistory";
 import { Wifi, WifiOff } from "lucide-react";
 
+// Production WebSocket goes through nginx (TLS) on the Oracle VM. Must be wss:// — the Vercel
+// page is HTTPS, so browsers block insecure ws:// and reject IP-only/self-signed certs.
+// Changing this URL requires a redeploy. See DEPLOYMENT.md.
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-const WS_URL = isLocal ? "ws://localhost:8000/ws" : "wss://80.225.244.24/ws";
+const WS_URL = isLocal ? "ws://localhost:8000/ws" : "wss://crypto-trading-analysis.duckdns.org/ws";
 
 export default function App() {
   const { data, connected } = useWebSocket(WS_URL);

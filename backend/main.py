@@ -26,7 +26,14 @@ app = FastAPI(title="Crypto Trading Bot API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    # Add the Vercel production origin here if/when the frontend makes REST /api calls.
+    # (The dashboard currently uses only the /ws WebSocket, which is not subject to CORS.)
+    # Deployment details: see DEPLOYMENT.md.
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://crypto-trading-analysis.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
