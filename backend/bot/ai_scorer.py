@@ -1,20 +1,16 @@
 """
-AI Signal Scorer — Claude API Integration
-Sends pattern + indicator data to Claude for trade confidence scoring.
-Returns a score 0-100 and reasoning.
+AI Signal Scorer — DISABLED
+
+Claude API integration has been disabled to avoid API key usage/cost.
+`score_signal` is a no-op that returns None, so the engine will not act on
+any signal. Re-enable by restoring the anthropic client and the API call
+in `score_signal`.
 """
 
-import json
 import logging
-import re
 from typing import Dict, List, Any, Optional
 
-import anthropic
-
-from config import ANTHROPIC_API_KEY, AI_CONFIDENCE_THRESHOLD
-
 logger = logging.getLogger(__name__)
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 
 SYSTEM_PROMPT = """You are an expert crypto trading analyst. You analyze candlestick patterns,
@@ -97,43 +93,10 @@ async def score_signal(
     trend_indicators: Dict[str, Any],
 ) -> Optional[Dict]:
     """
-    Ask Claude to evaluate the trade signal.
-    Returns dict with confidence_score, direction, reasoning, entry, sl, tp.
-    Returns None if API call fails.
+    DISABLED — Claude API scoring is turned off to avoid API key usage.
+
+    Always returns None. The engine treats a None result as "AI scoring
+    failed" and does not act on the signal, so no Claude API calls are made.
     """
-    if not patterns:
-        return None
-
-    prompt = build_analysis_prompt(symbol, timeframe, patterns, indicators, trend_indicators)
-
-    try:
-        response = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=1024,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = response.content[0].text.strip()
-
-        # Extract JSON from response (handles extra text around it)
-        match = re.search(r'\{.*\}', raw, re.DOTALL)
-        if not match:
-            logger.error(f"No JSON found in Claude response: {raw[:200]}")
-            return None
-        result = json.loads(match.group())
-        result["symbol"] = symbol
-        result["patterns"] = [p["pattern"] for p in patterns]
-        result["above_threshold"] = result.get("confidence_score", 0) >= AI_CONFIDENCE_THRESHOLD
-
-        logger.info(
-            f"AI Score for {symbol}: {result['confidence_score']} | "
-            f"Direction: {result['direction']} | Above threshold: {result['above_threshold']}"
-        )
-        return result
-
-    except json.JSONDecodeError as e:
-        logger.error(f"Claude returned invalid JSON: {e}")
-        return None
-    except Exception as e:
-        logger.error(f"Claude API error: {e}")
-        return None
+    logger.info(f"{symbol}: AI scoring disabled — no Claude API call made.")
+    return None
